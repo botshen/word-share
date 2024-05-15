@@ -26,11 +26,8 @@ const PlasmoInline = () => {
     const selection = window.getSelection();
     if (!selection) return;
     if (selection.toString().trim() !== '') {
-      console.log('selection', selection.toString());
       const range = selection.getRangeAt(0);
-      console.log('range', range);
       const rect = range.getBoundingClientRect();
-      console.log('rect', rect);
       const offsetX = 10; // 可调节横向偏移量
       const offsetY = 4; // 可调节纵向偏移量
       setPosition({
@@ -47,11 +44,15 @@ const PlasmoInline = () => {
   };
 
   const handleClick = (e: any) => {
-    if (e.target.id !== 'selection-button' && !hasTextSelected) { // 检查是否有文本被选中
+    // 获取图标元素
+    const button = document.getElementById('selection-button');
+
+    // 判断点击是否发生在图标或图标的padding区内
+    if (button && !button.contains(e.target)) {
+      // 如果点击发生在外部，则隐藏图标
       setIsVisible(false);
     }
   };
-
   useEffect(() => {
     document.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('click', handleClick);
