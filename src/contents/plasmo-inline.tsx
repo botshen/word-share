@@ -2,6 +2,9 @@ import type { PlasmoCSConfig, PlasmoGetInlineAnchor } from "plasmo"
 import { useEffect, useState } from "react"
 import cssText from "data-text:~/contents/plasmo-inline.css"
 import iconImage from "data-base64:~assets/icon.png"
+import { sendToBackground } from "@plasmohq/messaging"
+import { useStorage } from "@plasmohq/storage/hook"
+import { storageConfig } from "~store"
 
 // 匹配所有的网站
 export const config: PlasmoCSConfig = {
@@ -21,36 +24,33 @@ const PlasmoInline = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [hasTextSelected, setHasTextSelected] = useState(false); // 新增状态
+  const [word, setWord] = useStorage<string>(storageConfig)
 
+  // 当鼠标抬起时的事件处理
   const handleMouseUp = () => {
     const selection = window.getSelection();
-    if (!selection) return;
-    if (selection.toString().trim() !== '') {
+    if (selection && selection.toString().trim() !== '') {
+      const selectedText = selection.toString(); // 获取选中的文本
+      setWord(selectedText); // 把选中的文本保存起来
+
       const range = selection.getRangeAt(0);
       const rect = range.getBoundingClientRect();
-      const offsetX = 10; // 可调节横向偏移量
-      const offsetY = 4; // 可调节纵向偏移量
       setPosition({
-        x: rect.right + window.scrollX - offsetX,
-        y: rect.bottom + window.scrollY + offsetY
+        x: rect.right + window.scrollX,
+        y: rect.bottom + window.scrollY
       });
-      setIsVisible(true);
-      setHasTextSelected(true);
-
-      setTimeout(() => {
-        setHasTextSelected(false);
-      }, 100);
+      setIsVisible(true); // 显示图标
+      setHasTextSelected(true); // 标记已选择文本
+    } else {
+      setIsVisible(false); // 隐藏图标
+      setHasTextSelected(false); // 标记未选择文本
     }
   };
 
-  const handleClick = (e: any) => {
-    // 获取图标元素
+  const handleClick = (e) => {
     const button = document.getElementById('selection-button');
-
-    // 判断点击是否发生在图标或图标的padding区内
     if (button && !button.contains(e.target)) {
-      // 如果点击发生在外部，则隐藏图标
-      setIsVisible(false);
+      setIsVisible(false); // 当点击不在图标内部时，隐藏图标
     }
   };
   useEffect(() => {
@@ -62,6 +62,9 @@ const PlasmoInline = () => {
       document.removeEventListener('click', handleClick);
     };
   }, [hasTextSelected]); // 添加hasTextSelected作为依赖
+  const handleShareWord = async () => {
+    chrome.runtime.sendMessage({ type: "share" })
+  }
 
   return (
     <div>
@@ -80,7 +83,7 @@ const PlasmoInline = () => {
               boxShadow: '0 0 10px rgba(0,0,0,0.5)',
               cursor: 'pointer',
             }}
-            onClick={() => console.log('Button clicked')}
+            onClick={handleShareWord}
           >
             <img style={{ height: '16px', width: "16px" }} src={iconImage} />
           </div>
