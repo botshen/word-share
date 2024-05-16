@@ -2,7 +2,7 @@
   "name": "word-share",
   "displayName": "Word share",
   "version": "0.0.1",
-  "description": "A basic Plasmo extension.",
+  "description": "Edit and preview selected text then download as an image.",
   "author": "Shen Xin. <botshen@zgbj@gmail.com>",
   "scripts": {
     "dev": "plasmo dev",
