@@ -1,3 +1,4 @@
+import './xxx.scss'
 import { useStorage } from "@plasmohq/storage/hook";
 import * as htmlToImage from 'html-to-image';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -8,6 +9,17 @@ import { Resizable } from 're-resizable';
 import html2canvas from 'html2canvas';
 import downloadjs from 'downloadjs';
 
+const buttonStyle = {
+  color: "white",
+  backgroundColor: "#323d4d",
+  borderRadius: "10px",
+  border: "none",
+  padding: "10px 20px",
+  fontSize: "14px",
+  cursor: "pointer",
+  marginLeft: "10px",
+  marginTop: "10px"
+};
 function MyEditor() {
   const [word] = useStorage<string>(storageConfig)
   const imgRef = useRef(null);
@@ -15,12 +27,7 @@ function MyEditor() {
   // 编辑器内容
   const [code, setCode] = useState("");
   const handleProcedureContentChange = (content, delta, source, editor) => {
-    setCode(content);
-    //let has_attribues = delta.ops[1].attributes || "";
-    //console.log(has_attribues);
-    //const cursorPosition = e.quill.getSelection().index;
-    // this.quill.insertText(cursorPosition, "★");
-    //this.quill.setSelection(cursorPosition + 1);
+    setCode(content); 
   };
 
   const modules = {
@@ -31,9 +38,8 @@ function MyEditor() {
       [{ font: [] }],
       [{ align: ["right", "center", "justify"] }],
       [{ list: "ordered" }, { list: "bullet" }],
-      // ["link", "image"],
-      [{ color: ["red", "#785412"] }],
-      [{ background: ["red", "#785412"] }]
+      [{ color: ['black', 'red', 'green', 'blue', 'orange', 'yellow', 'white'] }],
+      [{ background: ['black', 'red', 'green', 'blue', 'orange', 'yellow', 'white'] }]
     ]
   };
 
@@ -72,7 +78,7 @@ function MyEditor() {
   // Function to generate image from HTML
   const generateImage = () => {
     // const node = nodeRef.current;
-    const node = reactQuillRef.current;
+    var node = document.querySelector(".ql-editor") as HTMLElement;
 
 
     // const node = document.createElement('div');
@@ -84,10 +90,8 @@ function MyEditor() {
       // node.innerHTML = alteredHtml;
       console.log('node', node)
       htmlToImage.toPng(node, {
-        backgroundColor: '#fff'
       })
         .then((dataUrl) => {
-          node.innerHTML = code; // 在截图后，重置为原来的HTML 
           const img = new Image();
           img.src = dataUrl;
           if (imgRef.current) {
@@ -97,7 +101,6 @@ function MyEditor() {
         })
         .catch((error) => {
           console.error('故障发生', error);
-          node.innerHTML = code; // 如果发生错误，同样重置HTML
 
         });
     }
@@ -141,8 +144,8 @@ function MyEditor() {
     // const canvas = await html2canvas(document.querySelector(".ql-container"));
     // const dataURL = canvas.toDataURL('image/png');
     // downloadjs(dataURL, 'download.png', 'image/png');
-    var node = document.querySelector(".ql-container") as HTMLElement; 
-    const dataUrl = await htmlToImage.toPng(node, { cacheBust: true, })
+    var node = document.querySelector(".ql-editor") as HTMLElement;
+    const dataUrl = await htmlToImage.toPng(node, { cacheBust: true })
     downloadjs(dataUrl, 'download.png', 'image/png');
 
   }
@@ -154,14 +157,14 @@ function MyEditor() {
   }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row' }} className="xxx" >
+    <div style={{ background: "white", height: '100%', display: 'flex', flexDirection: 'row', width: '1170px', margin: 'auto' }} className="xxx" >
       <Resizable
         defaultSize={{
-          width: 320,
+          width: 500,
           height: 200,
         }}
       >
-        <div style={{ border: '1px solid #ccc', zIndex: 100 }}>
+        <div style={{ zIndex: 100 }} >
           <ReactQuill
             ref={reactQuillRef}
 
@@ -172,8 +175,10 @@ function MyEditor() {
             onChange={handleProcedureContentChange}
           />
         </div>
-        <button onClick={generateImage}>Generate Image</button>
-        <button onClick={onButtonClick}>Download Image </button>
+        <div ref={imgRef} style={{ marginTop: '10px' }} />
+
+        <button style={buttonStyle} onClick={generateImage}>Generate Image</button>
+        <button style={buttonStyle} onClick={onButtonClick}>Download Image </button>
       </Resizable>
     </div>
   )
