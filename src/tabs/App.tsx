@@ -1,20 +1,15 @@
-import { useStorage } from "@plasmohq/storage/hook";
-import { storageConfig } from "~store";
+
+import MyEditor from "./word-editor";
 
 
 export default function DeltaFlyerPage() {
-  const [word, setWord] = useStorage<string>(storageConfig)
 
   return (
     <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
+      style={{ 
         padding: 16
       }}>
-      <h2>Delta Flyer Tab</h2>
-
-      <p>{word}</p>
-    </div>
+       <MyEditor />
+     </div>
   )
 }

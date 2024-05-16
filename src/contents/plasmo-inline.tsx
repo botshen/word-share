@@ -1,8 +1,7 @@
-import type { PlasmoCSConfig, PlasmoGetInlineAnchor } from "plasmo"
+import type { PlasmoCSConfig } from "plasmo"
 import { useEffect, useState } from "react"
 import cssText from "data-text:~/contents/plasmo-inline.css"
 import iconImage from "data-base64:~assets/icon.png"
-import { sendToBackground } from "@plasmohq/messaging"
 import { useStorage } from "@plasmohq/storage/hook"
 import { storageConfig } from "~store"
 
@@ -21,7 +20,7 @@ export const getStyle = () => {
 export const getShadowHostId = () => "plasmo-inline-words-share"
 
 const PlasmoInline = () => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [hasTextSelected, setHasTextSelected] = useState(false); // 新增状态
   const [word, setWord] = useStorage<string>(storageConfig)

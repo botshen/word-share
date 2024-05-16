@@ -13,7 +13,11 @@
     "@plasmohq/messaging": "^0.6.2",
     "@plasmohq/storage": "^1.10.0",
     "@types/webextension-polyfill": "^0.10.7",
-    "plasmo": "0.86.2",
+    "@wangeditor/editor": "^5.1.23",
+    "@wangeditor/editor-for-react": "^1.0.6",
+    "html-to-image": "^1.11.11",
+    "html2canvas": "^1.4.1",
+    "plasmo": "0.86.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "webextension-polyfill": "^0.12.0"
