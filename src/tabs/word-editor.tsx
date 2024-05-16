@@ -1,16 +1,15 @@
-import '@wangeditor/editor/dist/css/style.css'; // 引入 css
-
 import { useStorage } from "@plasmohq/storage/hook";
 import * as htmlToImage from 'html-to-image';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { storageConfig } from "~store";
 import { Resizable } from 're-resizable';
+import html2canvas from 'html2canvas';
+import downloadjs from 'downloadjs';
 
 function MyEditor() {
   const [word] = useStorage<string>(storageConfig)
-  const nodeRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef(null);
 
   // 编辑器内容
@@ -32,7 +31,7 @@ function MyEditor() {
       [{ font: [] }],
       [{ align: ["right", "center", "justify"] }],
       [{ list: "ordered" }, { list: "bullet" }],
-      ["link", "image"],
+      // ["link", "image"],
       [{ color: ["red", "#785412"] }],
       [{ background: ["red", "#785412"] }]
     ]
@@ -72,7 +71,10 @@ function MyEditor() {
 
   // Function to generate image from HTML
   const generateImage = () => {
-    const node = nodeRef.current;
+    // const node = nodeRef.current;
+    const node = reactQuillRef.current;
+
+
     // const node = document.createElement('div');
     // node.innerHTML = code + '<p><br></p>'; // add the content to the new node
 
@@ -82,7 +84,7 @@ function MyEditor() {
       // node.innerHTML = alteredHtml;
       console.log('node', node)
       htmlToImage.toPng(node, {
-
+        backgroundColor: '#fff'
       })
         .then((dataUrl) => {
           node.innerHTML = code; // 在截图后，重置为原来的HTML 
@@ -105,8 +107,45 @@ function MyEditor() {
     console.log('quill', quill)
 
   }
+  // const onButtonClick = useCallback(() => {
+  //   if (nodeRef.current === null) {
+  //     return
+  //   }
+
+  //   htmlToImage.toPng(nodeRef.current, { cacheBust: true, })
+  //     .then((dataUrl) => {
+  //       const link = document.createElement('a')
+  //       link.download = 'my-image-name.png'
+  //       link.href = dataUrl
+  //       link.click()
+  //     })
+  //     .catch((err) => {
+  //       console.log(err)
+  //     })
+  // }, [nodeRef])
   const reactQuillRef = useRef(null); // 创建对ReactQuill组件的引用
   const [quill, setQuill] = useState(null); // 使用state来持有Quill实例
+
+  // const onButtonClick = useCallback(async () => {
+  //   if (nodeRef.current === null) {
+  //     return
+  //   }
+  //   console.log('reactQuillRef.current',nodeRef.current)
+  //   const canvas = await html2canvas(nodeRef.current);
+  //   const dataURL = canvas.toDataURL('image/png');
+  //   downloadjs(dataURL, 'download.png', 'image/png');
+  // }, [nodeRef])
+
+  const onButtonClick = async () => {
+
+    // const canvas = await html2canvas(document.querySelector(".ql-container"));
+    // const dataURL = canvas.toDataURL('image/png');
+    // downloadjs(dataURL, 'download.png', 'image/png');
+    var node = document.querySelector(".ql-container") as HTMLElement; 
+    const dataUrl = await htmlToImage.toPng(node, { cacheBust: true, })
+    downloadjs(dataUrl, 'download.png', 'image/png');
+
+  }
 
   useEffect(() => {
     if (reactQuillRef.current) {
@@ -115,7 +154,7 @@ function MyEditor() {
   }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row' }}>
+    <div style={{ display: 'flex', flexDirection: 'row' }} className="xxx" >
       <Resizable
         defaultSize={{
           width: 320,
@@ -133,15 +172,8 @@ function MyEditor() {
             onChange={handleProcedureContentChange}
           />
         </div>
-        <div style={{ border: '1px solid #ccc', }}>
-          <div
-            ref={nodeRef}
-            dangerouslySetInnerHTML={{ __html: code }}
-            style={{ padding: '14px', border: '1px solid red' }} // 添加内联样式 
-          />
-        </div>
         <button onClick={generateImage}>Generate Image</button>
-        <button onClick={getHtml}> get html</button>
+        <button onClick={onButtonClick}>Download Image </button>
       </Resizable>
     </div>
   )
