@@ -10,9 +10,11 @@
     "package": "plasmo package"
   },
   "dependencies": {
+    "@codemirror/lang-javascript": "^6.2.2",
     "@plasmohq/messaging": "^0.6.2",
     "@plasmohq/storage": "^1.10.0",
     "@radix-ui/react-slot": "^1.0.2",
+    "@uiw/react-codemirror": "^4.22.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "codemirror": "^6.0.1",

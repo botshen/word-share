@@ -1,7 +1,7 @@
 import './xxx.scss'
 import { useStorage } from "@plasmohq/storage/hook";
 import * as htmlToImage from 'html-to-image';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { storageConfig } from "~store";
@@ -9,6 +9,10 @@ import { Resizable } from 're-resizable';
 import html2canvas from 'html2canvas';
 import downloadjs from 'downloadjs';
 import { Button } from '~components/ui/button';
+import CodeMirror from '@uiw/react-codemirror';
+import { javascript } from '@codemirror/lang-javascript';
+import { EditorView } from "@codemirror/view";
+
 
 const buttonStyle = {
   color: "white",
@@ -24,7 +28,11 @@ const buttonStyle = {
 function MyEditor() {
   const [word] = useStorage<string>(storageConfig)
   const imgRef = useRef(null);
-
+  const [value, setValue] = React.useState("console.log('hello world!');");
+  const onChange = React.useCallback((val, viewUpdate) => {
+    console.log('val:', val);
+    setValue(val);
+  }, []);
   // 编辑器内容
   const [code, setCode] = useState("");
   const handleProcedureContentChange = (content, delta, source, editor) => {
@@ -165,17 +173,9 @@ function MyEditor() {
           height: 200,
         }}
       >
-        <div style={{ zIndex: 100 }} >
-          <ReactQuill
-            ref={reactQuillRef}
+        <CodeMirror value={value} height="200px" width='100%' extensions={[javascript({ jsx: true }), EditorView.lineWrapping]} onChange={onChange} />
 
-            theme="snow"
-            modules={modules}
-            formats={formats}
-            value={code}
-            onChange={handleProcedureContentChange}
-          />
-        </div>
+
         <div ref={imgRef} style={{ marginTop: '10px' }} />
 
         <Button onClick={generateImage}>Generate Image</Button>
