@@ -8,6 +8,7 @@ import { storageConfig } from "~store";
 import { Resizable } from 're-resizable';
 import html2canvas from 'html2canvas';
 import downloadjs from 'downloadjs';
+import { Button } from '~components/ui/button';
 
 const buttonStyle = {
   color: "white",
@@ -27,7 +28,7 @@ function MyEditor() {
   // 编辑器内容
   const [code, setCode] = useState("");
   const handleProcedureContentChange = (content, delta, source, editor) => {
-    setCode(content); 
+    setCode(content);
   };
 
   const modules = {
@@ -157,7 +158,7 @@ function MyEditor() {
   }, []);
 
   return (
-    <div style={{ background: "white", height: '100%', display: 'flex', flexDirection: 'row', width: '1170px', margin: 'auto' }} className="xxx" >
+    <div style={{ background: "white", height: '100%', display: 'flex', flexDirection: 'row', width: '900px', margin: 'auto' }} className="xxx" >
       <Resizable
         defaultSize={{
           width: 500,
@@ -177,8 +178,8 @@ function MyEditor() {
         </div>
         <div ref={imgRef} style={{ marginTop: '10px' }} />
 
-        <button style={buttonStyle} onClick={generateImage}>Generate Image</button>
-        <button style={buttonStyle} onClick={onButtonClick}>Download Image </button>
+        <Button onClick={generateImage}>Generate Image</Button>
+        <Button onClick={onButtonClick}>Download Image </Button>
       </Resizable>
     </div>
   )

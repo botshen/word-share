@@ -1,3 +1,4 @@
+console.log('background start')
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'share') { 
     try {
@@ -8,3 +9,5 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     } 
   }
 });
+
+ 
